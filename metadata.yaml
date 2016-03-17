@@ -1,0 +1,12 @@
+tags:
+  - logging
+  - monitoring
+subordinate: true
+requires:
+  beats-host:
+    interface: juju-info
+    scope: container
+  logstash:
+    interface: elastic-beats
+  elasticsearch:
+    interface: elasticsearch

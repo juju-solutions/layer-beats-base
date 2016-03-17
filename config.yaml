@@ -1,0 +1,9 @@
+options:
+  install_sources:
+    type: string
+    default: deb http://packages.elastic.co/beats/apt stable main
+    description: apt repository to fetch beats from
+  install_keys:
+    type: string
+    default: D88E42B4
+    description: repository key

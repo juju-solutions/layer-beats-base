@@ -1,0 +1,4 @@
+includes:
+  - 'layer:basic'
+  - 'interface:elastic-beats'
+  - 'interface:elasticsearch'  
