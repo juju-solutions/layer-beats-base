@@ -1,4 +1,3 @@
-from charms.reactive import hook
 from charms.reactive import when
 from charms.reactive import when_not
 from charms.reactive import set_state
@@ -6,12 +5,6 @@ from charms.reactive import remove_state
 from charmhelpers.fetch import configure_sources
 from charmhelpers.core.hookenv import status_set
 from charmhelpers.core.unitdata import kv
-from elasticbeats import principal_unit_cache
-
-
-@hook('beats-host-joined')
-def assign_our_shipping_id():
-    principal_unit_cache()
 
 
 @when_not('beats.repo.available')

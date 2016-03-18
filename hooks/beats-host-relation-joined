@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# We want to brand our logging with juju naming sometimes, so use the principal
+# charms identifier, as the subordinate isn't as telling of a story when looking
+# at the data. Hostname is usually pretty abstract too unless dealing with MAAS.
+
+chlp unitdata set principal_name=$JUJU_REMOTE_UNIT
