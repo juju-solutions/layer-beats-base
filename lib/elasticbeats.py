@@ -4,6 +4,8 @@ from charmhelpers.core.unitdata import kv
 
 from subprocess import check_call
 
+from os import getenv
+
 
 def render_without_context(source, target):
     ''' Render beat template from global state context '''
@@ -36,8 +38,8 @@ def enable_beat_on_boot(service):
 def push_beat_index(elasticsearch, service):
     cmd = ["curl",
            "-XPUT",
-           "'http://{0}/_template/{1}'".format(elasticsearch, service),
-           " -d@/etc/{0}/{0}.template".format(service)]  # noqa
+           "http://{0}/_template/{1}".format(elasticsearch, service),
+           "-d@/etc/{0}/{0}.template.json".format(service)]  # noqa
 
     check_call(cmd)
 
@@ -50,6 +52,7 @@ def parse_protocols():
         if proto in bag:
             bag[proto]['ports'].append(port)
         else:
+            bag.update({proto: {}})
             bag[proto]['ports'] = [port]
             bag[proto]['name'] = proto
     return bag
