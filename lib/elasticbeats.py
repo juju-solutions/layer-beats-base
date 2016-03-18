@@ -14,6 +14,7 @@ def render_without_context(source, target):
 
     logstash_hosts = cache.get('beat.logstash')
     elasticsearch_hosts = cache.get('beat.elasticsearch')
+    context['principal_unit'] = cache.get('principal_name')
 
     if logstash_hosts:
         context.update({'logstash': logstash_hosts})
@@ -28,6 +29,12 @@ def render_without_context(source, target):
         context['logpath'] = context['logpath'].split(' ')
 
     render(source, target, context)
+
+
+def principal_unit_cache():
+    principal_name = getenv('JUJU_REMOTE_UNIT')
+    cache = kv()
+    cache.set('principal_name', principal_name)
 
 
 def enable_beat_on_boot(service):
@@ -48,11 +55,10 @@ def parse_protocols():
     protocols = config('protocols')
     bag = {}
     for protocol in protocols.split(' '):
-        proto, port = protocol.split(':')
+        proto, port = protocol.strip().split(':')
         if proto in bag:
-            bag[proto]['ports'].append(port)
+            bag[proto].append(port)
         else:
-            bag.update({proto: {}})
-            bag[proto]['ports'] = [port]
-            bag[proto]['name'] = proto
+            bag.update({proto: []})
+            bag[proto].append(port)
     return bag
