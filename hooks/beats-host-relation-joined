@@ -4,4 +4,4 @@
 # charms identifier, as the subordinate isn't as telling of a story when looking
 # at the data. Hostname is usually pretty abstract too unless dealing with MAAS.
 
-chlp unitdata set principal_name=$JUJU_REMOTE_UNIT
+chlp unitdata set principal_name $JUJU_REMOTE_UNIT
