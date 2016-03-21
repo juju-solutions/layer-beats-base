@@ -34,7 +34,7 @@ def cache_logstash_data(logstash):
     units = logstash.list_unit_data()
     cache = kv()
     if cache.get('beat.logstash'):
-        hosts = cache.get('filebeat.logstash')
+        hosts = cache.get('beat.logstash')
     else:
         hosts = []
     for unit in units:
