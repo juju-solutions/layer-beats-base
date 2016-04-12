@@ -2,3 +2,6 @@ includes:
   - 'layer:basic'
   - 'interface:elastic-beats'
   - 'interface:elasticsearch'  
+options:
+  basic:
+    use_venv: true
