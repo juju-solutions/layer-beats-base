@@ -4,4 +4,5 @@
 # charms identifier, as the subordinate isn't as telling of a story when looking
 # at the data. Hostname is usually pretty abstract too unless dealing with MAAS.
 
-chlp unitdata set principal_name $JUJU_REMOTE_UNIT
+# THIS PATH IS DEPENDENT ON use_virtualenv:true being set in your layer.yaml
+../.venv/bin/chlp unitdata set principal_name $JUJU_REMOTE_UNIT
