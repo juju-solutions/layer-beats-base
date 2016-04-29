@@ -2,26 +2,13 @@ from charms.reactive import when
 from charms.reactive import when_not
 from charms.reactive import set_state
 from charms.reactive import remove_state
-from charmhelpers.fetch import configure_sources
+import charms.apt
 from charmhelpers.core.hookenv import status_set
 from charmhelpers.core.unitdata import kv
-
-
-@when_not('beats.repo.available')
-def install_beats_repo():
-    configure_sources(update=True)
-    set_state('beats.repo.available')
-
 
 @when('config.changed')
 def config_changed():
     set_state('beat.render')
-
-
-@when('config.changed.install_sources')
-@when('config.changed.install_keys')
-def reinstall_filebeat():
-    remove_state('beats.repo.available')
 
 
 @when_not('logstash.connected', 'elasticsearch.connected')
