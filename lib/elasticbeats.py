@@ -25,7 +25,8 @@ def render_without_context(source, target):
         context.update({'protocols': parse_protocols()})
 
     # Split the log paths
-    if 'logpath' in context.keys():
+    if 'logpath' in context.keys() and
+      not isinstance(context['logpath'], list):
         context['logpath'] = context['logpath'].split(' ')
 
     render(source, target, context)
