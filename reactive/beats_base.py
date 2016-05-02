@@ -1,10 +1,10 @@
 from charms.reactive import when
 from charms.reactive import when_not
 from charms.reactive import set_state
-from charms.reactive import remove_state
-import charms.apt
+import charms.apt  # noqa
 from charmhelpers.core.hookenv import status_set
 from charmhelpers.core.unitdata import kv
+
 
 @when('config.changed')
 def config_changed():
