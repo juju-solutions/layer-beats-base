@@ -57,8 +57,8 @@ def parse_protocols():
     for protocol in protocols.split(' '):
         proto, port = protocol.strip().split(':')
         if proto in bag:
-            bag[proto].append(port)
+            bag[proto].append(int(port))
         else:
             bag.update({proto: []})
-            bag[proto].append(port)
+            bag[proto].append(int(port))
     return bag
