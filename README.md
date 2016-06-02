@@ -7,8 +7,8 @@ products. Such as delivery via apt, and common template parsing routines.
 ## States
 
 `beat.render` - When this state is set, you will need to re-render template
-data. This state occurs when a unit has received changes from a remote Data
-source such as `elasticsearch` or `logstash`
+data. This state occurs when a unit has received changes from a related
+application such as `elasticsearch` or `logstash`
 
 ## lib/elasticbeats.py
 
