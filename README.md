@@ -91,7 +91,7 @@ def enlist_beat():
 
 @when('elasticsearch.available')
 @when_not('mybeat.index.pushed')
-def push_packetbeat_index(elasticsearch):
+def push_mybeat_index(elasticsearch):
     hosts = elasticsearch.list_unit_data()
     for host in hosts:
         host_string = "{}:{}".format(host['host'], host['port'])
