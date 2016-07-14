@@ -1,0 +1,6 @@
+*.pyc
+*~
+.ropeproject
+.settings
+.tox
+.DS_Store
