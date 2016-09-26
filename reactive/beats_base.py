@@ -12,8 +12,8 @@ def config_changed():
 
 
 @when_not('logstash.connected', 'elasticsearch.connected')
-def blocked_messaging():
-    status_set('blocked', 'Waiting on relationship: elasticsearch or logstash')
+def waiting_messaging():
+    status_set('waiting', 'Waiting for: elasticsearch or logstash.')
 
 
 @when('logstash.available')
