@@ -5,5 +5,5 @@ options:
     description: apt repository to fetch beats from
   install_keys:
     type: string
-    default: D88E42B4
+    default: 46095ACC8548582C1A2699A9D27D666CD88E42B4
     description: repository key
