@@ -2,7 +2,8 @@ includes:
   - 'layer:basic'
   - 'layer:apt'
   - 'interface:elastic-beats'
-  - 'interface:elasticsearch'  
+  - 'interface:elasticsearch'
+  - 'interface:kafka'
 options:
   basic:
     use_venv: true

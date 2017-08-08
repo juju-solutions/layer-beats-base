@@ -11,9 +11,9 @@ def config_changed():
     set_state('beat.render')
 
 
-@when_not('logstash.connected', 'elasticsearch.connected')
+@when_not('logstash.connected', 'elasticsearch.connected', 'kafka.ready')
 def waiting_messaging():
-    status_set('waiting', 'Waiting for: elasticsearch or logstash.')
+    status_set('waiting', 'Waiting for: elasticsearch, logstash or kafka.')
 
 
 @when('logstash.available')
@@ -49,4 +49,22 @@ def cache_elasticsearch_data(elasticsearch):
             hosts.append(host_string)
 
     cache.set('beat.elasticsearch', hosts)
+    set_state('beat.render')
+
+
+@when('kafka.ready')
+def cache_kafka_data(kafka):
+    units = kafka.kafkas()
+    cache = kv()
+    if cache.get('beat.kafka'):
+        hosts = cache.get('beat.kafka')
+    else:
+        hosts = []
+    for unit in units:
+        host_string = "{0}:{1}".format(unit['host'],
+                                       unit['port'])
+        if host_string not in hosts:
+            hosts.append(host_string)
+
+    cache.set('beat.kafka', hosts)
     set_state('beat.render')

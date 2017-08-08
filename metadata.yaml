@@ -10,3 +10,5 @@ requires:
     interface: elastic-beats
   elasticsearch:
     interface: elasticsearch
+  kafka:
+    interface: kafka
