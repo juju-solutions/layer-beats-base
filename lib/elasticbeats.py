@@ -11,15 +11,20 @@ def render_without_context(source, target):
     ''' Render beat template from global state context '''
     cache = kv()
     context = config()
+    connected = False
 
     logstash_hosts = cache.get('beat.logstash')
     elasticsearch_hosts = cache.get('beat.elasticsearch')
     context['principal_unit'] = cache.get('principal_name')
 
     if logstash_hosts:
-        context.update({'logstash': logstash_hosts})
+        connected = True
+    context.update({'logstash': logstash_hosts})
+    if context['logstash_hosts']:
+        connected = True
     if elasticsearch_hosts:
-        context.update({'elasticsearch': elasticsearch_hosts})
+        connected = True
+    context.update({'elasticsearch': elasticsearch_hosts})
 
     if 'protocols' in context.keys():
         context.update({'protocols': parse_protocols()})
@@ -29,6 +34,7 @@ def render_without_context(source, target):
         context['logpath'] = context['logpath'].split(' ')
 
     render(source, target, context)
+    return connected
 
 
 def principal_unit_cache():

@@ -1,6 +1,6 @@
 from charms.reactive import when
 from charms.reactive import when_not
-from charms.reactive import set_state
+from charms.reactive import set_state, remove_state
 import charms.apt  # noqa
 from charmhelpers.core.hookenv import status_set
 from charmhelpers.core.unitdata import kv
@@ -34,14 +34,18 @@ def cache_logstash_data(logstash):
     set_state('beat.render')
 
 
+@when_not('logstash.available')
+def cache_remove_logstash_data():
+    cache = kv()
+    cache.unset('beat.logstash')
+    set_state('beat.render')
+
+
 @when('elasticsearch.available')
 def cache_elasticsearch_data(elasticsearch):
     units = elasticsearch.list_unit_data()
     cache = kv()
-    if cache.get('beat.elasticsearch'):
-        hosts = cache.get('beat.elasticsearch')
-    else:
-        hosts = []
+    hosts = []
     for unit in units:
         host_string = "{0}:{1}".format(unit['host'],
                                        unit['port'])
@@ -49,4 +53,11 @@ def cache_elasticsearch_data(elasticsearch):
             hosts.append(host_string)
 
     cache.set('beat.elasticsearch', hosts)
+    set_state('beat.render')
+
+
+@when_not('elasticsearch.available')
+def cache_remove_elasticsearch_data():
+    cache = kv()
+    cache.unset('beat.elasticsearch')
     set_state('beat.render')
