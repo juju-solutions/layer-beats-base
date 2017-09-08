@@ -15,6 +15,7 @@ def render_without_context(source, target):
 
     logstash_hosts = cache.get('beat.logstash')
     elasticsearch_hosts = cache.get('beat.elasticsearch')
+    kafka_hosts = cache.get('beat.kafka')
     context['principal_unit'] = cache.get('principal_name')
 
     if logstash_hosts:
@@ -25,6 +26,11 @@ def render_without_context(source, target):
     if elasticsearch_hosts:
         connected = True
     context.update({'elasticsearch': elasticsearch_hosts})
+    if kafka_hosts:
+        connected = True
+    context.update({'kafka': kafka_hosts})
+    if context['kafka_hosts']:
+        connected = True
 
     if 'protocols' in context.keys():
         context.update({'protocols': parse_protocols()})
