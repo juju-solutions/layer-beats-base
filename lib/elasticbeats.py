@@ -10,7 +10,7 @@ from os import getenv
 def render_without_context(source, target):
     ''' Render beat template from global state context '''
     cache = kv()
-    context = config()
+    context = dict(config())
     connected = False
 
     logstash_hosts = cache.get('beat.logstash')
