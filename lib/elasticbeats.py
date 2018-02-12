@@ -44,7 +44,9 @@ def render_without_context(source, target):
 
 
 def principal_unit_cache():
-    principal_name = getenv('JUJU_REMOTE_UNIT')
+    principal_name = getenv('JUJU_PRINCIPAL_UNIT')
+    if principal_name == '':
+        principal_name = getenv('JUJU_REMOTE_UNIT')
     cache = kv()
     cache.set('principal_name', principal_name)
 
