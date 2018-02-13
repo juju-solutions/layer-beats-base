@@ -1,5 +1,6 @@
 from charms.templating.jinja2 import render
 from charmhelpers.core.hookenv import config
+from charmhelpers.core.hookenv import principal_unit
 from charmhelpers.core.unitdata import kv
 
 from subprocess import check_call
@@ -17,7 +18,8 @@ def render_without_context(source, target):
     elasticsearch_hosts = cache.get('beat.elasticsearch')
     kafka_hosts = cache.get('beat.kafka')
     context['principal_unit'] = cache.get('principal_name')
-
+    context['model_name'] = cache.get('model_name')
+    
     if logstash_hosts:
         connected = True
     context.update({'logstash': logstash_hosts})
@@ -44,12 +46,14 @@ def render_without_context(source, target):
 
 
 def principal_unit_cache():
-    principal_name = getenv('JUJU_PRINCIPAL_UNIT')
-    if principal_name == '':
-        principal_name = getenv('JUJU_REMOTE_UNIT')
     cache = kv()
-    cache.set('principal_name', principal_name)
+    principal_name = principal_unit()
+    if principal_name:
+        cache.set('principal_name', principal_name)
 
+    model_name = getenv('JUJU_MODEL_NAME')
+    if model_name:
+        cache.set('model_name', model_name)
 
 def enable_beat_on_boot(service):
     """ Enable the beat to start automaticaly during boot """
