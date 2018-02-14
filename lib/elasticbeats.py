@@ -36,9 +36,11 @@ def render_without_context(source, target):
         context.update({'protocols': parse_protocols()})
 
     # Split space delimited config items
-    if 'fields' in context.keys() and not isinstance(context['fields'], list):  # noqa
+    if ('fields' in context.keys() and context['fields'] and not
+            isinstance(context['fields'], list)):
         context['fields'] = context['fields'].split(' ')
-    if 'logpath' in context.keys() and not isinstance(context['logpath'], list):  # noqa
+    if ('logpath' in context.keys() and context['logpath'] and not
+            isinstance(context['logpath'], list)):
         context['logpath'] = context['logpath'].split(' ')
 
     render(source, target, context)
