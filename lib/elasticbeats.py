@@ -1,5 +1,5 @@
 from charms.templating.jinja2 import render
-from charmhelpers.core.hookenv import config
+from charmhelpers.core.hookenv import config, juju_version
 from charmhelpers.core.unitdata import kv
 
 from subprocess import check_call
@@ -17,6 +17,18 @@ def render_without_context(source, target):
     elasticsearch_hosts = cache.get('beat.elasticsearch')
     kafka_hosts = cache.get('beat.kafka')
     context['principal_unit'] = cache.get('principal_name')
+
+    juju_major_version = int(juju_version().split('.')[0])
+
+    juju_info = {}
+    if juju_major_version >= 2:
+        juju_info['juju_model_name'] = getenv('JUJU_MODEL_NAME')
+        juju_info['juju_model_uuid'] = getenv('JUJU_MODEL_UUID')
+    else:
+        juju_info['juju_model_name'] = getenv('JUJU_ENV_NAME')
+        juju_info['juju_model_uuid'] = getenv('JUJU_ENV_UUID')
+
+    context.update(juju_info)
 
     if logstash_hosts:
         connected = True
