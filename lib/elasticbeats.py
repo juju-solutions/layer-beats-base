@@ -35,9 +35,12 @@ def render_without_context(source, target):
     if 'protocols' in context.keys():
         context.update({'protocols': parse_protocols()})
 
-    # Split the log paths
-    if 'logpath' in context.keys() and not isinstance(context['logpath'], list):  # noqa
-        context['logpath'] = context['logpath'].split(' ')
+    # Transform some keys into proper lists if they aren't already
+    # Do this only for non-empty strings / non-empty arrays
+    # Needed for proper jinja templating
+    for key in ('logpath', 'fields'):
+        if key in context.keys() and context[key] and not isinstance(context[key], list):  # noqa
+            context[key] = context[key].split(' ')
 
     render(source, target, context)
     return connected
