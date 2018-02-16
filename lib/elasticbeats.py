@@ -35,13 +35,12 @@ def render_without_context(source, target):
     if 'protocols' in context.keys():
         context.update({'protocols': parse_protocols()})
 
-    # Split space delimited config items
-    if ('fields' in context.keys() and context['fields'] and not
-            isinstance(context['fields'], list)):
-        context['fields'] = context['fields'].split(' ')
-    if ('logpath' in context.keys() and context['logpath'] and not
-            isinstance(context['logpath'], list)):
-        context['logpath'] = context['logpath'].split(' ')
+    # Transform some config options into proper lists if they aren't already.
+    # Do this only for non-empty values for proper jinja templating.
+    for key in ('fields', 'logpath'):
+        if (key in context.keys() and context[key] and not
+                isinstance(context[key], list)):
+            context[key] = context[key].split(' ')
 
     render(source, target, context)
     return connected
