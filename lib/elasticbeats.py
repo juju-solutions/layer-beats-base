@@ -8,15 +8,21 @@ from os import getenv
 
 
 def render_without_context(source, target):
-    ''' Render beat template from global state context '''
+    """ Render beat template from global state context. """
     cache = kv()
     context = dict(config())
     connected = False
 
+    # Add deployment attributes
+    model_info_cache()
+    principal_unit_cache()
+    context['juju_model_name'] = cache.get('model_name')
+    context['juju_model_uuid'] = cache.get('model_uuid')
+    context['juju_principal_unit'] = cache.get('principal_name')
+
     logstash_hosts = cache.get('beat.logstash')
     elasticsearch_hosts = cache.get('beat.elasticsearch')
     kafka_hosts = cache.get('beat.kafka')
-    context['principal_unit'] = cache.get('principal_name')
 
     if logstash_hosts:
         connected = True
@@ -32,18 +38,6 @@ def render_without_context(source, target):
     if context['kafka_hosts']:
         connected = True
 
-    juju_major_version = int(juju_version().split('.')[0])
-
-    juju_info = {}
-    if juju_major_version >= 2:
-        juju_info['juju_model_name'] = getenv('JUJU_MODEL_NAME')
-        juju_info['juju_model_uuid'] = getenv('JUJU_MODEL_UUID')
-    else:
-        juju_info['juju_model_name'] = getenv('JUJU_ENV_NAME')
-        juju_info['juju_model_uuid'] = getenv('JUJU_ENV_UUID')
-
-    context.update(juju_info)
-
     if 'protocols' in context.keys():
         context.update({'protocols': parse_protocols()})
 
@@ -58,11 +52,38 @@ def render_without_context(source, target):
     return connected
 
 
-def principal_unit_cache():
+def model_info_cache():
+    """ Cache the model info for this deployment.
+
+    This info will not change over the lifetime of the deployment, so we
+    only need to set it once.
+    """
     cache = kv()
-    principal_name = principal_unit()
-    if principal_name:
-        cache.set('principal_name', principal_name)
+    if not (cache.get('model_name') and cache.get('model_uuid')):
+        juju_major_version = int(juju_version().split('.')[0])
+
+        juju_info = {}
+        if juju_major_version >= 2:
+            juju_info['model_name'] = getenv('JUJU_MODEL_NAME')
+            juju_info['model_uuid'] = getenv('JUJU_MODEL_UUID')
+        else:
+            juju_info['model_name'] = getenv('JUJU_ENV_NAME')
+            juju_info['model_uuid'] = getenv('JUJU_ENV_UUID')
+
+        cache.update(juju_info)
+
+
+def principal_unit_cache():
+    """ Cache the principal unit that a beat is related to.
+
+    This info will not change over the lifetime of the deployment, so we
+    only need to set it once.
+    """
+    cache = kv()
+    if not cache.get('principal_name'):
+        principal_name = principal_unit()
+        if principal_name:
+            cache.set('principal_name', principal_name)
 
 
 def enable_beat_on_boot(service):
