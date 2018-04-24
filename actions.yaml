@@ -1,0 +1,4 @@
+reinstall:
+    description: |
+      Purge an existing Beats package and reinstall with the version available
+      in the configured repository.
