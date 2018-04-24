@@ -1,8 +1,9 @@
+import subprocess
+
+from charms.apt import get_package_version
 from charms.templating.jinja2 import render
 from charmhelpers.core.hookenv import config, juju_version, principal_unit
 from charmhelpers.core.unitdata import kv
-
-from subprocess import check_call
 
 from os import getenv
 
@@ -88,7 +89,16 @@ def principal_unit_cache():
 
 def enable_beat_on_boot(service):
     """ Enable the beat to start automaticaly during boot """
-    check_call(['update-rc.d', service, 'defaults', '95', '10'])
+    # Remove any existing links first
+    remove_beat_on_boot(service)
+    # update-rc.d is compatible with sysv/upstart/systemd
+    subprocess.check_call(['update-rc.d', service, 'defaults', '95', '10'])
+
+
+def remove_beat_on_boot(service):
+    """ Remove the beat init service symlinks """
+    # update-rc.d is compatible with sysv/upstart/systemd
+    subprocess.check_call(['update-rc.d', '-f', service, 'remove'])
 
 
 def push_beat_index(elasticsearch, service):
@@ -97,7 +107,7 @@ def push_beat_index(elasticsearch, service):
            "http://{0}/_template/{1}".format(elasticsearch, service),
            "-d@/etc/{0}/{0}.template.json".format(service)]  # noqa
 
-    check_call(cmd)
+    subprocess.check_call(cmd)
 
 
 def parse_protocols():
@@ -111,3 +121,34 @@ def parse_protocols():
             bag.update({proto: []})
             bag[proto].append(int(port))
     return bag
+
+
+def get_package_candidate(pkg):
+    """ Return the package version from the repo if different than the version
+    that is currently installed.
+
+    :param: str pkg: package name as known by apt
+    :returns: str ver_str: version of new repo package, or None
+    """
+    # NB: we cannot use the charmhelpers.fetch.apt_cache nor the
+    # apt module from the python3-apt deb as they are only available
+    # as system packages. Charms with use_system_packages=False in
+    # layer.yaml would fail. Subprocess apt-cache policy instead.
+    policy_cmd = ['apt-cache', 'policy', pkg]
+    grep_cmd = ['grep', 'Candidate:']
+    p1 = subprocess.Popen(policy_cmd, stdout=subprocess.PIPE)
+    p2 = subprocess.Popen(grep_cmd, stdin=p1.stdout,
+                          stdout=subprocess.PIPE)
+    p1.stdout.close()
+    policy_output = p2.communicate()[0].strip().decode()
+    p1.wait()
+
+    # policy_output will look like this:
+    #  Candidate: 5.6.9
+    try:
+        new_ver = policy_output.split(':', 1)[1].strip()
+    except IndexError:
+        return None
+    else:
+        cur_ver = get_package_version(pkg, full_version=True)
+        return new_ver if new_ver != cur_ver else None
