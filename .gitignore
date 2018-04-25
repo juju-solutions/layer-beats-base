@@ -1,6 +1,5 @@
+.coverage
 *.pyc
-*~
-.ropeproject
-.settings
+__pycache__
 .tox
-.DS_Store
+.unit-state.db

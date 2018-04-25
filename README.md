@@ -18,9 +18,14 @@ common practices in charming and conventions with the beats stack.
 - `render_without_context` - This renders a provided jinja template using the
 charms configuration and relation data as context objects.
 
-- `enable_beat_on_boot` - This enables an init.d style job (not systemd capable)
+- `enable_beat_on_boot` - This enables an init.d style job
+
+- `remove_beat_on_boot` - This removes symlinks for an init.d style job
 
 - `push_beat_index` - Reads from a .json file in /etc/*mybeat*/mybeat.template.json
+
+- `get_package_candidate` - Checks the configured apt repo for an available
+candidate version.
 
 ## Writing your own beat
 
@@ -48,7 +53,7 @@ maintainer: you <you@yourcorp.tld>
 description: |
   What does your beat do? Specifics count.
 series:
-  - trusty
+  - xenial
 
 ```
 
