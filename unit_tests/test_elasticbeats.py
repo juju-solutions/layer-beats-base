@@ -3,8 +3,8 @@ import sys
 from unittest import TestCase, mock
 from unittest.mock import Mock
 
-# charms.layer.status only exists in the built charm; mock it out before
-# the beats_base imports since those depend on c.l.s.*.
+# A few layers only exists in the built charm; mock them out before
+# the elasticbeats imports since those depend on these layers.
 layer_mock = Mock()
 sys.modules['charms.apt'] = layer_mock
 sys.modules['charms.templating'] = layer_mock
