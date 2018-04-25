@@ -1,0 +1,65 @@
+#!/usr/local/sbin/charm-env python3
+
+"""
+Reinstall a Beat package.
+
+This action is common to all Beats charms and facilitates package installation
+when new versions are available in the configured apt repository. Individual
+charms will determine when a new version is available and will set informative
+status directing operators to run this action.
+"""
+
+import charms.apt
+import charms.reactive
+import sys
+
+from charms.layer import status
+from charms.reactive import is_state, remove_state, set_state
+from charmhelpers.core import hookenv, host, unitdata
+
+
+def fail(msg):
+    """Fail this action with a message for the operator."""
+    hookenv.action_set({'outcome': 'failure'})
+    hookenv.action_fail(msg)
+    sys.exit()
+
+
+def queue_reinstall(pkg):
+    """Stop, purge, and tell apt to re-install a Beat package."""
+    status.maint('Reinstalling {}.'.format(pkg))
+    host.service_stop(pkg)
+    charms.apt.purge([pkg])
+    # Ensure our pkg is removed from the kv apt queue before re-adding it
+    unitdata.kv().flush(True)
+
+    # Tell the apt layer to reinstall our beat. The actual install will
+    # happen on the next reactive bus invocation.
+    charms.apt.queue_install([pkg])
+
+
+def main():
+    """Reinstall a Beats package when indicated by the charm."""
+    if is_state('filebeat.reinstall'):
+        queue_reinstall('filebeat')
+        remove_state('filebeat.reinstall')
+    elif is_state('metricbeat.reinstall'):
+        queue_reinstall('metricbeat')
+        remove_state('metricbeat.reinstall')
+    elif is_state('packetbeat.reinstall'):
+        queue_reinstall('packetbeat')
+        remove_state('packetbeat.reinstall')
+    else:
+        fail('Nothing to reinstall.')
+
+    # Invoke reactive handlers to setup and configure our new Beat
+    set_state('beat.render')
+    charms.reactive.main()
+
+    # Notify the operator of our success
+    hookenv.action_set({'outcome': 'success'})
+    status.active('Reinstall was successful.')
+
+
+if __name__ == '__main__':
+    main()

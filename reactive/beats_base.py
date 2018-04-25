@@ -1,8 +1,7 @@
+from charms.layer import status
 from charms.reactive import when
 from charms.reactive import when_not
-from charms.reactive import set_state, remove_state
-import charms.apt  # noqa
-from charmhelpers.core.hookenv import status_set
+from charms.reactive import set_state
 from charmhelpers.core.unitdata import kv
 
 
@@ -13,7 +12,7 @@ def config_changed():
 
 @when_not('logstash.connected', 'elasticsearch.connected', 'kafka.ready')
 def waiting_messaging():
-    status_set('waiting', 'Waiting for: elasticsearch, logstash or kafka.')
+    status.waiting('Waiting for: elasticsearch, logstash or kafka.')
 
 
 @when('logstash.available')

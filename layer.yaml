@@ -1,6 +1,7 @@
 includes:
   - 'layer:basic'
   - 'layer:apt'
+  - 'layer:status'
   - 'interface:elastic-beats'
   - 'interface:elasticsearch'
   - 'interface:kafka'
