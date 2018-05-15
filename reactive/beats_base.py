@@ -10,7 +10,7 @@ def config_changed():
     set_state('beat.render')
 
 
-@when_not('logstash.connected', 'elasticsearch.connected', 'kafka.ready')
+@when_not('logstash.available', 'elasticsearch.available', 'kafka.ready')
 def waiting_messaging():
     status.waiting('Waiting for: elasticsearch, logstash or kafka.')
 
