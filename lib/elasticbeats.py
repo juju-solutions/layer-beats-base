@@ -2,7 +2,7 @@ import subprocess
 
 from charms.apt import get_package_version
 from charms.templating.jinja2 import render
-from charmhelpers.core.hookenv import config, juju_version, principal_unit
+from charmhelpers.core.hookenv import config, juju_version, log, principal_unit
 from charmhelpers.core.unitdata import kv
 
 from os import getenv
@@ -101,13 +101,29 @@ def remove_beat_on_boot(service):
     subprocess.check_call(['update-rc.d', '-f', service, 'remove'])
 
 
-def push_beat_index(elasticsearch, service):
+def push_beat_index(elasticsearch, service, fatal=True):
+    """ Push a beat index to Elasticsearch.
+
+    :param: str elasticsearch: host string for ES, <ip>:<port>
+    :param: str service: index name
+    :param: bool fatal: True to raise exception on failure; False to log it
+    :returns: bool: True if succesfull; False otherwise
+    """
     cmd = ["curl",
            "-XPUT",
            "http://{0}/_template/{1}".format(elasticsearch, service),
            "-d@/etc/{0}/{0}.template.json".format(service)]  # noqa
 
-    subprocess.check_call(cmd)
+    try:
+        subprocess.check_call(cmd)
+    except subprocess.CalledProcessError as e:
+        if fatal:
+            raise
+        else:
+            log('Failed to push index to Elasticsearch: {}'.format(e))
+            return False
+    else:
+        return True
 
 
 def parse_protocols():
