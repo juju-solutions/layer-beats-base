@@ -7,3 +7,19 @@ options:
     type: string
     default: 46095ACC8548582C1A2699A9D27D666CD88E42B4
     description: repository key
+  logstash_hosts:
+    type: string
+    default: ""
+    description: "A comma separated list of logstash output hosts in addition to those from relations."
+  logstash_ssl_cert:
+    type: string
+    default: ""
+    description: "Public SSL certificate data (base64 encoded) for connecting securely to logstash."
+  logstash_ssl_key:
+    type: string
+    default: ""
+    description: "Private SSL key data (base64 encoded) for connecting security to logstash."
+  kafka_hosts:
+    type: string
+    default: ""
+    description: "A comma separated list of kafka output hosts in addition to those from relations."
