@@ -23,3 +23,11 @@ options:
     type: string
     default: ""
     description: "A comma separated list of kafka output hosts in addition to those from relations."
+  kafka_topic:
+    type: string
+    default: "%{[type]}"
+    description: "Topic name. Format strings are allowed."
+  kafka_topics:
+    type: string
+    default: ""
+    description: "Expert setting topics filter."
