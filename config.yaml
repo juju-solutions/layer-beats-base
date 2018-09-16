@@ -31,3 +31,7 @@ options:
     type: string
     default: ""
     description: "Expert setting topics filter."
+  kafka_version:
+    type: string
+    default: ""
+    description: "Expert setting kafka version."
