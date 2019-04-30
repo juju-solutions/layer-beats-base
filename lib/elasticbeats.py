@@ -5,7 +5,7 @@ from charms.templating.jinja2 import render
 from charmhelpers.core.hookenv import config, juju_version, log, principal_unit
 from charmhelpers.core.unitdata import kv
 
-from os import getenv
+from os import getenv, path
 
 
 def render_without_context(source, target):
@@ -38,6 +38,9 @@ def render_without_context(source, target):
     context.update({'kafka': kafka_hosts})
     if context['kafka_hosts']:
         connected = True
+
+    if path.isdir('/var/lib/docker/containers'):
+        context.update({'has_docker': True})
 
     if 'protocols' in context.keys():
         context.update({'protocols': parse_protocols()})
