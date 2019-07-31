@@ -4,6 +4,7 @@ from charms.apt import get_package_version
 from charms.templating.jinja2 import render
 from charmhelpers.core.hookenv import config, juju_version, log, principal_unit
 from charmhelpers.core.unitdata import kv
+from charmhelpers.core.host import service_resume, service_pause
 
 from os import getenv, path
 
@@ -94,14 +95,12 @@ def enable_beat_on_boot(service):
     """ Enable the beat to start automaticaly during boot """
     # Remove any existing links first
     remove_beat_on_boot(service)
-    # update-rc.d is compatible with sysv/upstart/systemd
-    subprocess.check_call(['update-rc.d', service, 'defaults', '95', '10'])
+    service_resume(service)
 
 
 def remove_beat_on_boot(service):
     """ Remove the beat init service symlinks """
-    # update-rc.d is compatible with sysv/upstart/systemd
-    subprocess.check_call(['update-rc.d', '-f', service, 'remove'])
+    service_pause(service)
 
 
 def push_beat_index(elasticsearch, service, fatal=True):
