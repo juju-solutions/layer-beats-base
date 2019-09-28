@@ -40,6 +40,9 @@ def render_without_context(source, target):
     if context['kafka_hosts']:
         connected = True
 
+    # detect various container attributes
+    if path.isdir('/var/log/containers'):
+        context.update({'has_containers': True})
     if path.isdir('/var/lib/docker/containers'):
         context.update({'has_docker': True})
 
