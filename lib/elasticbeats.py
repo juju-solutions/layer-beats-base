@@ -45,6 +45,8 @@ def render_without_context(source, target):
         context.update({'has_containers': True})
     if path.isdir('/var/lib/docker/containers'):
         context.update({'has_docker': True})
+    if context.get('kube_logs', False) and path.isfile('/root/.kube/config'):
+        context.update({'has_k8s': True})
 
     if 'protocols' in context.keys():
         context.update({'protocols': parse_protocols()})
